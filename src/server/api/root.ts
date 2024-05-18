@@ -1,4 +1,6 @@
-import { postRouter } from "@/server/api/routers/post";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import { register } from "./routers/register";
+
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
 /**
@@ -7,11 +9,13 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-  post: postRouter,
+  register,
 });
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
+export type AppRouterOutputTypes = inferRouterOutputs<AppRouter>;
+export type AppRouterInputTypes = inferRouterInputs<AppRouter>;
 
 /**
  * Create a server-side caller for the tRPC API.
