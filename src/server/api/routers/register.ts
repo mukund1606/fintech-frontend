@@ -14,6 +14,9 @@ export const register = publicProcedure
           name: input.name,
           email: input.email,
           password: encryptedPassword,
+          budget: {
+            create: {},
+          },
         },
       });
     } catch (e) {
