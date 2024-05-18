@@ -1,3 +1,10 @@
+import ExpensesTable from "./expensesTable";
+
 export default function ExpensesPage() {
-  return <div>ExpensesPage</div>;
+  return (
+    <div>
+      <h1 className="text-center text-2xl font-semibold">Expenses</h1>
+      <ExpensesTable />
+    </div>
+  );
 }

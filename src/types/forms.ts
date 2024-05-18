@@ -19,3 +19,12 @@ export const RegisterFormSchema = LoginFormSchema.extend({
     message: "Name is Required",
   }),
 });
+
+export const SetIncomeFormSchema = z.object({
+  income: z.number().min(1, {
+    message: "Income must be a positive number",
+  }),
+  totalBudget: z.number().min(1, {
+    message: "Total Budget must be a positive number",
+  }),
+});

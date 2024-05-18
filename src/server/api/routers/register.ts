@@ -1,19 +1,7 @@
-import { z } from "zod";
-
 import { clientDecryption, hashPassword } from "@/lib/utils";
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import { publicProcedure } from "@/server/api/trpc";
 import { RegisterFormSchema } from "@/types/forms";
 import { TRPCError } from "@trpc/server";
-
-export const postRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
-    }),
-});
 
 export const register = publicProcedure
   .input(RegisterFormSchema)
