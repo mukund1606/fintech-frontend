@@ -18,13 +18,13 @@ export default function Chart() {
   const { data } = api.user.getBudget.useQuery();
   const { data: data2 } = api.expenses.getExpensesForGraph.useQuery();
   const colors = [
-    "#F09EA7",
-    "#F6CA94",
-    "#FAFABE",
-    "#C1EBC0",
-    "#C7CAFF",
-    "#CDABEB",
-    "#F6C2F3",
+    "#9b5fe0",
+    "#16a4d8",
+    "#8bd346",
+    "#efdf48",
+    "#60dbe8",
+    "#d64e12",
+    "#f9a52c",
   ];
 
   return (
@@ -58,14 +58,16 @@ export default function Chart() {
             <Line
               type="monotone"
               dataKey="income"
-              stroke="#C7CAFF"
+              stroke="#8bd346"
               name="Income"
+              strokeWidth={3}
             />
             <Line
               type="monotone"
               dataKey="expense"
-              stroke="#F6C2F3"
+              stroke="#d64e12"
               name="Expense"
+              strokeWidth={3}
             />
             <YAxis />
             <Tooltip />

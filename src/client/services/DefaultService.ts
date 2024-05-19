@@ -10,6 +10,8 @@ import type { initial_stats } from "../models/initial_stats";
 import type { llm } from "../models/llm";
 import type { orcReturnRype } from "../models/orcReturnRype";
 import type { predictReturn } from "../models/predictReturn";
+
+const BASE_URL = "http://localhost:8000";
 export class DefaultService {
   /**
    * Home
@@ -19,7 +21,7 @@ export class DefaultService {
   public static homeGet(): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "https://fintech-python.onrender.com/",
+      url: `${BASE_URL}`,
     });
   }
   /**
@@ -33,7 +35,7 @@ export class DefaultService {
   ): CancelablePromise<predictReturn> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "https://fintech-python.onrender.com/recomended",
+      url: `${BASE_URL}/recomended`,
       body: requestBody,
       mediaType: "application/json",
       errors: {
@@ -52,7 +54,7 @@ export class DefaultService {
   ): CancelablePromise<orcReturnRype> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "https://fintech-python.onrender.com/ocr",
+      url: `${BASE_URL}/ocr`,
       body: requestBody,
       mediaType: "application/json",
       errors: {
@@ -69,7 +71,7 @@ export class DefaultService {
   public static getLlmChatPost(requestBody: llm): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "https://fintech-python.onrender.com/chat",
+      url: `${BASE_URL}/chat`,
       body: requestBody,
       mediaType: "application/json",
       errors: {

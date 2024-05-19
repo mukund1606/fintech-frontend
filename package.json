@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "generate-client": "openapi --input http://10.10.160.97:8000/openapi.json --output ./src/client --client axios",
+    "generate-client": "openapi --input http://localhost:8000/openapi.json --output ./src/client --client axios",
     "build": "next build",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",

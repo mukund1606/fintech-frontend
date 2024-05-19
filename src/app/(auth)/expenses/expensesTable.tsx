@@ -424,6 +424,23 @@ export default function DataTable() {
           </ModalHeader>
           <ModalBody className="overflow-y-auto">
             <div className="flex flex-col gap-4">
+              <input
+                type="file"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = async (e) => {
+                    const imageSrc = e.target?.result as string;
+                    setImageSrc(imageSrc);
+                    const data = await DefaultService.ocrOcrPost({
+                      file: imageSrc ?? "",
+                    });
+                    setOCRData(data);
+                  };
+                  reader.readAsDataURL(file);
+                }}
+              />
               {imageSrc ? (
                 <>
                   <Image
@@ -475,7 +492,6 @@ export default function DataTable() {
                 <Webcam
                   audio={false}
                   screenshotFormat="image/png"
-                  mirrored
                   className="max-h-[500px]"
                   videoConstraints={{
                     facingMode: "environment",

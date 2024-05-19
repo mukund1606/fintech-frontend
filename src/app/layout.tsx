@@ -54,7 +54,7 @@ export default async function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className="min-h-screen w-full">
-        <Providers attribute="class" defaultTheme="system" enableSystem>
+        <Providers attribute="class" defaultTheme="light" enableSystem>
           <TRPCReactProvider>
             <Header user={user} />
             <div className="flex">
