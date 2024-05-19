@@ -27,7 +27,12 @@ export default function EditIncome({ income, totalBudget }: EditIncomeProps) {
           <Pencil />
         </Button>
       </Tooltip>
-      <Modal isDismissable={false} isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal
+        isDismissable={false}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        className="max-w-[85%] overflow-y-auto"
+      >
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">Edit Budget</ModalHeader>
           <ModalBody>

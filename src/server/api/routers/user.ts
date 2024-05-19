@@ -1,3 +1,4 @@
+import { DefaultService } from "@/client";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { SetIncomeFormSchema } from "@/types/forms";
 import { TRPCError } from "@trpc/server";
@@ -68,22 +69,40 @@ export const userRouter = createTRPCRouter({
         });
       }
       const totalBudget = userData.totalBudget;
-      const categories = [
-        "Food",
-        "Electricity",
-        "Transport",
-        "Subscription",
-        "Rent",
-        "Medical",
-        "Others",
-      ];
-      const percentage = [0.3, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1];
-      const budget = categories.map((category, index) => {
-        return {
-          category,
-          budget: totalBudget * (percentage[index] ?? 0),
-        };
+      const modelRes = await DefaultService.recomendRecomendedPost({
+        income: userData.income,
+        savings: userData.income - totalBudget,
       });
+      const budget = [
+        {
+          category: "Food",
+          budget: modelRes.Food,
+        },
+        {
+          category: "Electricity",
+          budget: modelRes.Electricity,
+        },
+        {
+          category: "Transport",
+          budget: modelRes.Transportation,
+        },
+        {
+          category: "Subscription",
+          budget: modelRes.Paid_services_subscription,
+        },
+        {
+          category: "Rent",
+          budget: modelRes.Rent_EMI,
+        },
+        {
+          category: "Medical",
+          budget: modelRes.Insurance,
+        },
+        {
+          category: "Others",
+          budget: modelRes.Others,
+        },
+      ];
       return budget;
     } catch (error) {
       throw new TRPCError({

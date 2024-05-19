@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { CreateExpenseFormSchema } from "@/types/forms";
+import { type Category } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -65,7 +66,6 @@ export const expensesRouter = createTRPCRouter({
         });
       }
     }),
-
   getExpensesForGraph: protectedProcedure.query(async ({ ctx }) => {
     const user = ctx.session.user;
     try {
@@ -125,4 +125,68 @@ export const expensesRouter = createTRPCRouter({
       });
     }
   }),
+  createMultipleExpenses: protectedProcedure
+    .input(
+      z.object({
+        date: z.object({
+          day: z.number().min(1).max(31),
+          month: z.number().min(1).max(12),
+          year: z.number().min(2000),
+        }),
+        expenses: z.array(
+          z.object({
+            category: z.string(),
+            amount: z.number().min(1),
+            description: z.string().optional(),
+          }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = ctx.session.user;
+      try {
+        const date = new Date(
+          input.date.year,
+          input.date.month - 1,
+          input.date.day,
+        );
+        await ctx.db.expense.createMany({
+          data: input.expenses.map((expense) => {
+            let category: Category;
+            if (expense.category.toLowerCase() === "food") {
+              category = "FOOD";
+            } else if (expense.category.toLowerCase() === "electricity") {
+              category = "ELECTRICITY";
+            } else if (expense.category.toLowerCase() === "transport") {
+              category = "TRANSPORT";
+            } else if (expense.category.toLowerCase() === "subscription") {
+              category = "SUBSCRIPTION";
+            } else if (expense.category.toLowerCase() === "property") {
+              category = "PROPERTY";
+            } else if (expense.category.toLowerCase() === "medical") {
+              category = "MEDICAL";
+            } else {
+              category = "OTHER";
+            }
+            return {
+              userId: user.id,
+              amount: expense.amount,
+              category: category,
+              date,
+              isIncome: false,
+              modeOfPayment: "CASH",
+              description: expense.description,
+            };
+          }),
+        });
+        return {
+          message: "Expenses created successfully",
+        };
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create expenses",
+        });
+      }
+    }),
 });

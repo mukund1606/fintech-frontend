@@ -168,7 +168,12 @@ export default function IncomeForm({
         </Form>
       </div>
       {showPopup && (
-        <Modal isOpen onOpenChange={setShowPopup} size="5xl">
+        <Modal
+          isOpen
+          onOpenChange={setShowPopup}
+          size="5xl"
+          className="max-h-[90%] overflow-y-auto"
+        >
           <ModalContent>
             <ModalHeader>
               <h1 className="text-2xl font-semibold">Recommended Budgets</h1>

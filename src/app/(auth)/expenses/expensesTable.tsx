@@ -5,15 +5,18 @@ import { api, isTRPCClientError } from "@/trpc/react";
 
 import { parseAsInteger, useQueryStates } from "next-usequerystate";
 
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { EyeIcon, PlusIcon, TrashIcon } from "lucide-react";
 
 import { format } from "date-fns";
 
 import { toast } from "sonner";
 
+import Webcam from "react-webcam";
+
 import ErrorComponent from "@/components/errorComponent";
 import {
   Button,
+  Image,
   Modal,
   ModalBody,
   ModalContent,
@@ -38,6 +41,7 @@ import {
   type SortDescriptor,
 } from "@nextui-org/react";
 
+import { DefaultService, type orcReturnRype } from "@/client";
 import type { categorySchema, modeOfPaymentSchema } from "@/types/forms";
 import { type ExpensesTableCellData } from "@/types/tableCells";
 import type { z } from "zod";
@@ -76,6 +80,13 @@ export default function DataTable() {
     onOpen: onCreateModalOpen,
     onOpenChange: onCreateModalOpenChange,
   } = useDisclosure();
+
+  const {
+    isOpen: isOCRModalOpen,
+    onOpen: onOCRModalOpen,
+    onOpenChange: onOCRModalOpenChange,
+  } = useDisclosure();
+
   const {
     data: allData,
     isPending,
@@ -84,6 +95,18 @@ export default function DataTable() {
   } = api.expenses.getExpenses.useQuery(undefined, {
     retry: 0,
   });
+
+  const ocrRoute = api.expenses.createMultipleExpenses.useMutation({
+    onSuccess() {
+      toast.success("Expenses created successfully");
+    },
+    onError() {
+      toast.error("Failed to create expenses");
+    },
+  });
+
+  const [imageSrc, setImageSrc] = useState<string | null>("");
+  const [ocrData, setOCRData] = useState<orcReturnRype>();
 
   const [searchCategory, setSearchCategory] = useState<
     z.infer<typeof categorySchema>[]
@@ -298,6 +321,15 @@ export default function DataTable() {
             >
               <PlusIcon className="h-8 w-8" />
             </Button>
+            <Button
+              isIconOnly
+              variant="bordered"
+              size="lg"
+              className="h-14 w-14"
+              onPress={onOCRModalOpen}
+            >
+              <EyeIcon className="h-8 w-8" />
+            </Button>
           </div>
         </div>
       </div>
@@ -374,6 +406,92 @@ export default function DataTable() {
           </ModalHeader>
           <ModalBody className="overflow-y-auto">
             <CreateExpenseForm />
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
+      <Modal
+        isOpen={isOCRModalOpen}
+        onOpenChange={onOCRModalOpenChange}
+        isDismissable={false}
+        size="5xl"
+        className="max-h-[85vh] max-w-[98vw]"
+        placement="center"
+      >
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1 text-lg">
+            Create Expense using OCR
+          </ModalHeader>
+          <ModalBody className="overflow-y-auto">
+            <div className="flex flex-col gap-4">
+              {imageSrc ? (
+                <>
+                  <Image src={imageSrc} alt="Captured Image" />
+                  {
+                    <div className="flex flex-col gap-6">
+                      <div>
+                        Date: {ocrData?.date?.year}-{ocrData?.date?.month}-
+                        {ocrData?.date?.day}
+                      </div>
+                      <div className="flex flex-col gap-4">
+                        {ocrData?.data.map((data, i) => (
+                          <div className="flex flex-col gap-2" key={i}>
+                            <div>Category: {data.category}</div>
+                            <div>Amount: {data.amount}</div>
+                            <div>Description: {data.description}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  }
+                  <div className="flex gap-4">
+                    <Button
+                      onPress={() => {
+                        setImageSrc(null);
+                      }}
+                    >
+                      Retake photo
+                    </Button>
+                    <Button
+                      onPress={async () => {
+                        if (!ocrData?.date || !ocrData?.data) return;
+                        if (ocrData.data.length === 0) return;
+                        await ocrRoute.mutateAsync({
+                          date: ocrData.date,
+                          expenses: ocrData.data,
+                        });
+                        setImageSrc(null);
+                      }}
+                    >
+                      Save Expenses
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <Webcam
+                  audio={false}
+                  screenshotFormat="image/png"
+                  mirrored
+                  className="max-h-[500px]"
+                >
+                  {/* @ts-expect-error getScreenshot is not available in the types */}
+                  {({ getScreenshot }) => (
+                    <Button
+                      onPress={async () => {
+                        const imageSrc = getScreenshot();
+                        setImageSrc(imageSrc);
+                        const data = await DefaultService.ocrOcrPost({
+                          file: imageSrc ?? "",
+                        });
+                        setOCRData(data);
+                      }}
+                    >
+                      Capture photo
+                    </Button>
+                  )}
+                </Webcam>
+              )}
+            </div>
           </ModalBody>
           <ModalFooter></ModalFooter>
         </ModalContent>
