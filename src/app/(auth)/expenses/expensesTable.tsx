@@ -426,7 +426,11 @@ export default function DataTable() {
             <div className="flex flex-col gap-4">
               {imageSrc ? (
                 <>
-                  <Image src={imageSrc} alt="Captured Image" />
+                  <Image
+                    src={imageSrc}
+                    alt="Captured Image"
+                    className="max-h-[500px]"
+                  />
                   {
                     <div className="flex flex-col gap-6">
                       <div>
@@ -473,6 +477,9 @@ export default function DataTable() {
                   screenshotFormat="image/png"
                   mirrored
                   className="max-h-[500px]"
+                  videoConstraints={{
+                    facingMode: "environment",
+                  }}
                 >
                   {/* @ts-expect-error getScreenshot is not available in the types */}
                   {({ getScreenshot }) => (

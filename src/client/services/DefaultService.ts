@@ -19,7 +19,7 @@ export class DefaultService {
   public static homeGet(): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "http://10.10.160.97:8000/",
+      url: "https://fintech-python.onrender.com/",
     });
   }
   /**
@@ -33,7 +33,7 @@ export class DefaultService {
   ): CancelablePromise<predictReturn> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "http://10.10.160.97:8000/recomended",
+      url: "https://fintech-python.onrender.com/recomended",
       body: requestBody,
       mediaType: "application/json",
       errors: {
@@ -52,7 +52,7 @@ export class DefaultService {
   ): CancelablePromise<orcReturnRype> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "http://10.10.160.97:8000/ocr",
+      url: "https://fintech-python.onrender.com/ocr",
       body: requestBody,
       mediaType: "application/json",
       errors: {
@@ -69,7 +69,7 @@ export class DefaultService {
   public static getLlmChatPost(requestBody: llm): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "POST",
-      url: "http://10.10.160.97:8000/chat",
+      url: "https://fintech-python.onrender.com/chat",
       body: requestBody,
       mediaType: "application/json",
       errors: {
